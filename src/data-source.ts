@@ -4,7 +4,7 @@ import { User } from "./entity/User"
 import { Book } from "./entity/Book"
 import { Review } from "./entity/Review"
 import * as dotenv from 'dotenv'
-import express from 'express'
+import { Category } from "./entity/Category"
 
 
 dotenv.config()
@@ -21,7 +21,9 @@ export const AppDataSource = new DataSource({
     database: POSTGRES_DB,
     synchronize: true,
     logging: false,
-    entities: [User, Book, Review],
+    entities: [User, Book, Review, Category],
     migrations: [],
     subscribers: [],
 })
+
+AppDataSource.initialize()

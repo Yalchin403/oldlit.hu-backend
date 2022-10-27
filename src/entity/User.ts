@@ -18,17 +18,18 @@ export class User {
     @Column()
     age: number
 
-    @Column()
-    isSuperUser: boolean = false
+    @Column({select: false})
+    isSuperUser: boolean
 
-    @Column()
+    @Column({unique: true})
     email: string
 
-    @Column()
+    @Column({select: false})
     password: string
 
-    @Column()
-    isEmailVerified: boolean = false
+
+    @Column({select: false})
+    isEmailVerified: boolean
 
     @Column()
     dateJoined: Date = new Date()

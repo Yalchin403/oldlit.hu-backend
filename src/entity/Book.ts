@@ -1,6 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm"
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    OneToMany,
+    ManyToMany,
+    JoinTable,
+} from "typeorm"
 import { User } from "./User"
 import { Review } from './Review'
+import { Category } from "./Category"
 
 
 @Entity()
@@ -23,6 +32,10 @@ export class Book {
 
     @ManyToOne(() => User, (user) => user.books)
     user: User
+
+    @ManyToMany(() => Category)
+    @JoinTable()
+    categories: Category[]
 }
 
 

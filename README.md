@@ -6,7 +6,7 @@ Steps to run this project:
 
 1. Run `npm i` command
 2. Setup env veriable required for project. Write them out in `.env` file
-    - [] It should contain following variables:
+    - It should contain following variables:
     ```
     POSTGRES_PASSWORD=yoursecretpass
     POSTGRES_USER=yourdatabaseusername
