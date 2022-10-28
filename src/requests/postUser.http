@@ -1,0 +1,14 @@
+POST http://127.0.0.1:3000/users/
+Content-Type: application/json
+
+{
+    "firstName":"Yalchin403",
+    "lastName": "Mammadli",
+    "age": 23,
+    "password1":"Yalcin-1",
+    "password2":"Yalcin-1",
+    "email":"yalchinmammadli@outlook.com"
+}
+
+
+# If you use postman, make sure you use raw for body
