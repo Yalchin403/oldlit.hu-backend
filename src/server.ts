@@ -9,6 +9,8 @@ const PORT = process.env.APP_PORT;
 const app = express();
 app.use(express.json());
 app.use(express.static('static'));
+const { trim_all} = require('request_trimmer');
+app.use(trim_all);
 
 // Define Routes
 app.use('/', require('./routes/index'));

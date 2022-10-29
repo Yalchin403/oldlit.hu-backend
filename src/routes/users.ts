@@ -3,9 +3,14 @@ const router = express.Router();
 import * as dotenv from 'dotenv'
 import { AppDataSource } from '../data-source'
 import {User} from '../entity/User'
-import {isEmail} from '../utils/user'
+import {
+    isEmail,
+    isDataEmpty,
+    isPassMatch,
+    isEmailTaken,
+} from '../utils/user'
 import * as bcrypt from 'bcryptjs'
-
+import { type } from 'os';
 
 dotenv.config();
 //  @route GET /
@@ -25,39 +30,47 @@ router.get('/', async (req, res) => {
 
 router.post('/',async (req, res) => {
     try {
-        const { firstName } = req.body;
-        const { lastName } = req.body;
-        const {age} = req.body;
-        const { email } = req.body;
-        const { password1 } = req.body;
-        const { password2 } = req.body;
+        if(!isDataEmpty(req.body)){
+            const {firstName} = req.body;
+            const {lastName} = req.body;
+            const {age} = req.body;
+            let {email} = req.body;
+            const {password1} = req.body;
+            const {password2} = req.body;
+            email = email.toLowerCase();
 
-        if(firstName != "" && lastName != "" && age != "" && email != "" && password1 != "" && password2 != ""){
-
-            if(password1 == password2){
+            if(isPassMatch(password1, password2)){
 
                 if(isEmail(email)) {
+                    let emailTaken = await isEmailTaken(email);
 
-                    // check if we already have the email address
+                    if(!emailTaken){
+                        let encrptedPass = bcrypt.hashSync(password1, bcrypt.genSaltSync());
+                        let userObj = new User();
+                        userObj.firstName = firstName;
+                        userObj.lastName = lastName;
+                        userObj.age = parseInt(age);
+                        userObj.email = email;
+                        userObj.dateJoined = new Date();
+                        userObj.isEmailVerified = false;
+                        userObj.isSuperUser = false;
+                        userObj.password = encrptedPass;
 
-                    let encrptedPass = bcrypt.hashSync(password1, bcrypt.genSaltSync());
+                        // save user to db
+                        await AppDataSource.manager.save(userObj);
+                        
+                        let serializedUserObj = await AppDataSource.manager.findOneBy(User, {
+                            id: userObj.id,
+                        })
+                        res.status(201).json(serializedUserObj);
 
-                    let userObj = new User();
-                    userObj.firstName = firstName;
-                    userObj.lastName = lastName;
-                    userObj.age = parseInt(age);
-                    userObj.email = email;
-                    userObj.dateJoined = new Date();
-                    userObj.isEmailVerified = false;
-                    userObj.isSuperUser = false;
-                    userObj.password = encrptedPass;
+                        //TODO:
+                        //  send email verification
+                    }
 
-                    await AppDataSource.manager.save(userObj);
-                    
-                    let serializedUserObj = await AppDataSource.manager.findOneBy(User, {
-                        id: userObj.id,
-                    })
-                    res.status(201).json(serializedUserObj);
+                    else {
+                        res.status(409).json({"error":"email is already taken"});
+                    }
 
                 } else {
                     res.status(403).json({"error": "email is not valid"});
@@ -67,10 +80,6 @@ router.post('/',async (req, res) => {
             }
         }
         
-
-        
-
-
     } catch (err) {
         console.error(err);
         res.status(500).json("Internal server error");

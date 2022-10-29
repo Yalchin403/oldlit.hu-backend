@@ -27,7 +27,6 @@ export class User {
     @Column({select: false})
     password: string
 
-
     @Column({select: false})
     isEmailVerified: boolean
 
