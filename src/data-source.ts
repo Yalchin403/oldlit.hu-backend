@@ -14,7 +14,7 @@ let POSTGRES_DB = process.env.POSTGRES_DB;
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
+    host: "db",
     port: 5432,
     username: POSTGRES_USER,
     password: POSTGRESS_PASSWORD,

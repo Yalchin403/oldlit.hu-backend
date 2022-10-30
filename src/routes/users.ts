@@ -10,11 +10,11 @@ import {
     isEmailTaken,
 } from '../utils/user'
 import * as bcrypt from 'bcryptjs'
-import { type } from 'os';
+import sendEmail from '../queues/email';
+
 
 dotenv.config();
-//  @route GET /
-// @desc redirect to original Url
+
 
 router.get('/', async (req, res) => {
         try {
@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
 
 router.post('/',async (req, res) => {
     try {
+
         if(!isDataEmpty(req.body)){
             const {firstName} = req.body;
             const {lastName} = req.body;
@@ -57,15 +58,19 @@ router.post('/',async (req, res) => {
                         userObj.password = encrptedPass;
 
                         // save user to db
-                        await AppDataSource.manager.save(userObj);
+                        // await AppDataSource.manager.save(userObj);
                         
                         let serializedUserObj = await AppDataSource.manager.findOneBy(User, {
                             id: userObj.id,
                         })
                         res.status(201).json(serializedUserObj);
 
-                        //TODO:
                         //  send email verification
+                        sendEmail({
+                            "email": email,
+                            "firstName": firstName
+                        }) 
+
                     }
 
                     else {
