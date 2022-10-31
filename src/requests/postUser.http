@@ -1,10 +1,9 @@
-POST http://127.0.0.1:3000/users/
+POST http://127.0.0.1:3000/api/users/
 Content-Type: application/json
 
 {
     "firstName":"ddos",
     "lastName": "hacker",
-    "age": 25,
     "password1":"Yalcin-1",
     "password2":"Yalcin-1",
     "email":"ddos.hacker@bk.ru"

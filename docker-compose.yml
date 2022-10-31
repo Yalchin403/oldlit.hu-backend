@@ -45,7 +45,7 @@ services:
       - type: bind
         source: .
         target: /src
-    command: nodemon start
+    command: npm start
     ports:
       - "3000:3000"
     env_file:

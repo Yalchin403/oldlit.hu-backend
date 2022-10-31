@@ -15,12 +15,6 @@ export class User {
     @Column()
     lastName: string
 
-    @Column()
-    age: number
-
-    @Column({select: false})
-    isSuperUser: boolean
-
     @Column({unique: true})
     email: string
 
@@ -28,10 +22,13 @@ export class User {
     password: string
 
     @Column({select: false})
-    isEmailVerified: boolean
+    isSuperUser: boolean
 
     @Column()
     dateJoined: Date = new Date()
+
+    @Column({select: false})
+    isEmailVerified: boolean
 
     @OneToMany(() => Book, (book) => book.user)
     books: Book[]
@@ -39,5 +36,3 @@ export class User {
     @OneToMany(() => Review, (review) => review.user)
     reviews: Review[]
 }
-
-

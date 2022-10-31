@@ -11,13 +11,27 @@ dotenv.config();
 
 router.get('/', async (req, res) => {
         try {
-            const books = await AppDataSource.manager.find(Book)
-            return res.status(200).json(books);
+                
+            let books = AppDataSource.manager.find(Book, {
+                where: {
+                    isVerified: true
+                }
+            });
+
+            res.json(books);
         } catch (err) {
             console.error(err);
             res.status(500).json("Internal server error");
         }
-       }
-    )
+})
 
+
+router.post('/', async (req, res) => {
+    try {
+        
+    } catch(err) {
+        console.error(err);
+        res.status(500).json("Internal server error");
+    }
+})
 module.exports = router;

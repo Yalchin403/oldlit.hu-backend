@@ -27,6 +27,9 @@ export class Book {
     @Column()
     price: number
 
+    @Column()
+    isVerified: boolean
+
     @OneToMany(() => Review, (review) => review.book)
     reviews: Review[]
 

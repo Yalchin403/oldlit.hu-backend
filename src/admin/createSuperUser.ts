@@ -11,11 +11,11 @@ AppDataSource.initialize().then(async () => {
     let userObj = new User();
     userObj.firstName = "Yalchin";
     userObj.lastName = "Mammadli";
-    userObj.age = 100;
     userObj.email = process.env.SUPER_USER_EMAIL;
     userObj.isSuperUser = true;
     userObj.dateJoined = new Date();
     userObj.isEmailVerified = true;
     userObj.password = bcrypt.hashSync(plainPassword, bcrypt.genSaltSync());
+
     await AppDataSource.manager.save(userObj);
 });
