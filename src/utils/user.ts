@@ -1,45 +1,51 @@
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 const mailgun = require("mailgun-js");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+
+dotenv.config();
+
 
 export function isEmail(email: string) {
     let regExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     let result: boolean = regExp.test(email);
-    
+
     return result;
 }
 
 
-export function isDataEmpty(reqBody){
-    for(let formField in reqBody){
-        if(reqBody[formField] == ""){
+export function isDataEmpty(reqBody) {
+    for (let formField in reqBody) {
+        if (reqBody[formField] == "") {
             return false;
         }
     }
 
-    if(!reqBody.length){
-        return false
+    if (!reqBody.length) {
+        return false;
     }
 
-    return true
+    return true;
 }
 
 
-export function isPassMatch(pass1, pass2){
-    if(pass1==pass2){
+export function isPassMatch(pass1, pass2) {
+    if (pass1 == pass2) {
         return true;
     }
 
-    return false; 
+    return false;
 }
 
 
-export async function isEmailTaken(email_){
+export async function isEmailTaken(email_) {
     let userObj = await AppDataSource.manager.findBy(User, {
         email: email_
-    })
+    });
 
-    if(userObj.length){
+    if (userObj.length) {
         return true;
     }
 
@@ -48,12 +54,12 @@ export async function isEmailTaken(email_){
 
 export type emailDataType = {
     firstName: string,
-    email: string
-    verifyLink: string
-}
+    email: string;
+    verifyLink: string;
+};
 
 
-export function sendSMTPEmail(toEmail: string, subject_: string, content: string){
+export function sendSMTPEmail(toEmail: string, subject_: string, content: string) {
     const mgObj = mailgun({
         apiKey: process.env.SMTP_API_KEY,
         domain: process.env.SMTP_DOMAIN,
@@ -71,4 +77,9 @@ export function sendSMTPEmail(toEmail: string, subject_: string, content: string
         console.log(body);
     });
 
+}
+
+
+export function generateAccessToken(userID) {
+    return jwt.sign({id:userID}, process.env.SECRET_KEY_JWT, { expiresIn: '1d' });
 }

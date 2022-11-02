@@ -1,6 +1,6 @@
 FROM node:18-alpine as base
-WORKDIR /src
-EXPOSE 3000
-COPY . /
-RUN npm i express-openid-connect
+WORKDIR /src/
+COPY ./package.json /src/package.json
 RUN npm install
+COPY . /
+EXPOSE 3000
