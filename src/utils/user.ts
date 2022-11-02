@@ -53,9 +53,9 @@ export async function isEmailTaken(email_) {
 }
 
 export type emailDataType = {
-    firstName: string,
-    email: string;
-    verifyLink: string;
+    email: string,
+    emailSubject: string,
+    emailContentHTML: string
 };
 
 
@@ -80,6 +80,6 @@ export function sendSMTPEmail(toEmail: string, subject_: string, content: string
 }
 
 
-export function generateAccessToken(userID) {
-    return jwt.sign({id:userID}, process.env.SECRET_KEY_JWT, { expiresIn: '1d' });
+export function generateAccessToken(payload, expiration) {
+    return jwt.sign(payload, process.env.SECRET_KEY_JWT, { expiresIn: expiration });
 }

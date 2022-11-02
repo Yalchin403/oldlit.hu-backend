@@ -1,5 +1,6 @@
 import Queue = require('bull');
 import emailProcess from "../bg-processes/email";
+import { emailDataType } from '../utils/user';
 
 const emailQueue = new Queue('email', {
     redis: {
@@ -10,7 +11,7 @@ const emailQueue = new Queue('email', {
 
 emailQueue.process(emailProcess)
 
-const sendEmail = (data: any) => {
+const sendEmail = (data: emailDataType) => {
     emailQueue.add(data);
 };
 

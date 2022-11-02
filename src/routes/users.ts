@@ -33,8 +33,8 @@ router.get('/confirm-email/:token/', UserController.confirmEmail);
 router.put('/:userID/', UserController.update);
 router.delete('/userID/', UserController.destroy);
 router.post('/login/', UserController.login);
-router.get('/logout/', UserController.logout);
-router.post('/forgot-password/', UserController.forgotPassword);
+router.get('/forgot-password/', UserController.forgotPassword);
+router.patch("/change-password/:forgotPassToken", UserController.changePassword);
 
 
 

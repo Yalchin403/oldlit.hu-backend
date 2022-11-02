@@ -12,6 +12,7 @@ import {
     isEmailTaken,
     generateAccessToken,
 } from '../utils/user';
+import e = require("express");
 const jwt = require('jsonwebtoken');
 
 
@@ -24,6 +25,10 @@ if (process.env.PROJ_ENV === "dev") {
 } else {
     baseURL = process.env.PROD_DOMAIN;
 }
+const LoginExp: string = "1800s";
+const EmailConfirmExp: string = "1d";
+const ForgotPassExp: string = "1d";
+
 
 
 export class UserController {
@@ -100,13 +105,25 @@ export class UserController {
                             let payload = {
                                 userID: userObj.id
                             };
-                            let token = jwt.sign(payload, SECRET_KEY_JWT, { expiresIn: '1d' });
+                            let token = generateAccessToken(payload, '1d');
                             let verifyLink: string = `${baseURL}/users/confirm-email/${token}`;
+
+                            let emailSubject: string = "Verify your email";
+                            let emailContentHTML: string = `
+                                Hello, <b>${firstName}</b>,<br>
+                                <br>Welcome to our website!<br>
+                                Please visit the below link to verify your account.<br><br>
+
+                                ${verifyLink}
+
+                                <br><br>
+
+                                Thanks for joining!`;
 
                             sendEmail({
                                 "email": email,
-                                "firstName": firstName,
-                                "verifyLink": verifyLink
+                                "emailSubject": emailSubject,
+                                "emailContentHTML": emailContentHTML
                             });
 
                             res.status(201).json(serializedUserObj);
@@ -182,7 +199,10 @@ export class UserController {
                     const isPassCorrect = bcrypt.compareSync(password, userObj.password);
                     if (isPassCorrect) {
                         // Send JWT
-                        const access_token = generateAccessToken(userObj.id);
+                        const payload = {
+                            id: userObj.id
+                        };
+                        const access_token = generateAccessToken(payload, LoginExp);
                         console.log(access_token);
                         return res.json({ "access_token": access_token });
                     }
@@ -204,23 +224,78 @@ export class UserController {
         }
     }
 
-    static async logout(req: Request, res: Response) {
-        // get the current token
-        // invalidate it
-    }
-
     static async forgotPassword(req: Request, res: Response) {
         // generate token by user id
         // send to the email
         // have another end point to change password with the token
+        let { email } = req.body;
+        email = email.toLowerCase();
+        const userObj = await AppDataSource.manager.findOneBy(User, {
+            email: email
+        });
+
+        if (userObj !== null) {
+            let payload = { id: userObj.id };
+            let token: string = generateAccessToken(payload, ForgotPassExp);
+            let changePassLink: string = `${baseURL}/api/users/forgot-password/${token}`;
+            let emailSubject = "Change your password";
+            let emailContentHTML = `As per your request, you can visit the link below to change your password:
+                ${changePassLink}
+                `;
+            sendEmail({
+                "email": email,
+                "emailSubject": emailSubject,
+                "emailContentHTML": emailContentHTML
+            });
+
+            return res.status(200).json({ "success": "email sent" });
+        }
+
+        else {
+            return res.status(404).json({ "error": "account not found" });
+        }
+
+
     }
 
-    static async forgotPasswordHandler(req: Request, res: Response) {
-        // get 2 passwords
-        // compare, check if matches
-        // save
-    }
 
+    static async changePassword(req: Request, res: Response) {
+        try {
+            if (!isDataEmpty(req.body)) {
+                const { password1 } = req.body;
+                const { password2 } = req.body;
+                const forgotPassToken = req.params.forgotPassToken;
+                let payload = jwt.verify(forgotPassToken, SECRET_KEY_JWT);
+                let { userID } = payload;
+                let userObj = AppDataSource.manager.findOneBy(User, {
+                    id: userID
+                });
+
+                if (userObj !== null) {
+
+                    if (isPassMatch(password1, password2)) {
+                        (await userObj).password = bcrypt.hashSync(password1, bcrypt.genSaltSync());
+                        await AppDataSource.manager.save(userObj);
+                    }
+
+                    return res.status(200).json({ "success": "password changed" });
+                }
+
+                else {
+                    return res.status(404).json({ "error": "user not found" });
+                }
+            }
+
+            else {
+                return res.status(422).json({ "error": "password and confirm password are required" });
+            }
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ "error": "internal server error" });
+        }
+
+    }
+    
     static async authenticateToken(req: Request, res: Response, next) {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
