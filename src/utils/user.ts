@@ -19,15 +19,15 @@ export function isEmail(email: string) {
 export function isDataEmpty(reqBody) {
     for (let formField in reqBody) {
         if (reqBody[formField] == "") {
-            return false;
+            return true;
         }
     }
 
-    if (!reqBody.length) {
-        return false;
+    if ((!Object.keys(reqBody).length)) {
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 
@@ -55,7 +55,7 @@ export async function isEmailTaken(email_) {
 export type emailDataType = {
     email: string,
     emailSubject: string,
-    emailContentHTML: string
+    emailContentHTML: string;
 };
 
 

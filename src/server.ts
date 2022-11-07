@@ -1,6 +1,7 @@
 const express = require("express");
 import * as dotenv from 'dotenv'
 const { trim_all} = require('request_trimmer');
+const methodOverride = require('method-override')
 
 
 dotenv.config(); // configure dotenv
@@ -11,6 +12,9 @@ const app = express();
 app.use(express.json());
 app.use(express.static('static'));
 app.use(trim_all);
+
+// override with POST having ?_method=PUT
+app.use(methodOverride('_method'));
 
 // Define Routes
 app.use('/api', require('./routes/index'));

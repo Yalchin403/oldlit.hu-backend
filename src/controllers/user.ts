@@ -13,6 +13,7 @@ import {
     generateAccessToken,
 } from '../utils/user';
 import e = require("express");
+import { json } from "stream/consumers";
 const jwt = require('jsonwebtoken');
 
 
@@ -148,12 +149,83 @@ export class UserController {
         }
     }
 
+    // only for authenticated users
     static async update(req: Request, res: Response) {
+        if (!isDataEmpty(req.body)) {
+            const { userID } = req.params;
+            const userObj = await AppDataSource.manager.findOneBy(User, {
+                id: +userID
+            });
 
+            if (userObj == null) {
+                return res.status(404).json({ "error": "user not found" });
+            }
+
+            const requestedUserID = req["user"].id;
+
+            if (+userID === requestedUserID) {
+                const { firstName } = req.body;
+                const { lastName } = req.body;
+
+                if (req.body.hasOwnProperty("firstName")) {
+                    userObj.firstName = firstName;
+                }
+
+                if (req.body.hasOwnProperty("lastName")) {
+                    userObj.lastName = lastName;
+                }
+
+                await AppDataSource.manager.save(userObj);
+
+                return res.status(200).json({ "success": "updated" });
+
+            }
+
+            else {
+                return res.status(403).json({ "error": "forbidden" });
+            }
+        }
+
+        else {
+            return res.status(422).json({ "error": "request body cannot be empty" });
+        }
     }
 
+    // only superusers
     static async destroy(req: Request, res: Response) {
+        const { userID } = req.params;
+        const userObj = await AppDataSource.manager.findOneBy(User, {
+            id: +userID
+        });
+        const requestedUserID = req["user"].id;
+        const requestedUserObj = await AppDataSource.getRepository(User).findOne({
+            where: { id: requestedUserID },
+            select: ["isSuperUser"],
+        });
 
+        if (requestedUserObj !== null) {
+
+            if (requestedUserObj.isSuperUser) {
+
+                if (userObj !== null) {
+                    await AppDataSource.getRepository(User).remove(userObj);
+                    return res.status(204).json({ "success": "deleted" });
+
+                }
+
+                else {
+                    return res.status(404).json({ "error": "user not found" });
+                }
+            }
+
+            else {
+                return res.status(403).json({ "error": "unauthorized attempt" });
+            }
+        }
+
+        else {
+            return res.status(404).json({ "error": "user not found" });
+        }
     }
 
     static async confirmEmail(req: Request, res: Response) {
@@ -192,7 +264,7 @@ export class UserController {
                 select: ["password", "id", "isEmailVerified"],
 
             });
-            console.log(userObj);
+
             if (userObj !== null) {
 
                 if (userObj.isEmailVerified) {
@@ -203,12 +275,10 @@ export class UserController {
                             id: userObj.id
                         };
                         const access_token = generateAccessToken(payload, LoginExp);
-                        console.log(access_token);
                         return res.json({ "access_token": access_token });
                     }
                     else {
-                        // response is OutgoingMessage object that server response http request
-                        return res.json({ error: 'passwords do not match' });
+                        return res.json({ error: 'email or password is incorrect' });
                     }
 
                 }
@@ -230,14 +300,16 @@ export class UserController {
         // have another end point to change password with the token
         let { email } = req.body;
         email = email.toLowerCase();
+        console.log(email);
         const userObj = await AppDataSource.manager.findOneBy(User, {
             email: email
         });
 
+
         if (userObj !== null) {
             let payload = { id: userObj.id };
             let token: string = generateAccessToken(payload, ForgotPassExp);
-            let changePassLink: string = `${baseURL}/api/users/forgot-password/${token}`;
+            let changePassLink: string = `${baseURL}/api/users/change-password/${token}/`;
             let emailSubject = "Change your password";
             let emailContentHTML = `As per your request, you can visit the link below to change your password:
                 ${changePassLink}
@@ -248,7 +320,7 @@ export class UserController {
                 "emailContentHTML": emailContentHTML
             });
 
-            return res.status(200).json({ "success": "email sent" });
+            return res.status(202).json({ "success": "email sent" });  // The request has been accepted for processing, but the processing has not been completed
         }
 
         else {
@@ -258,16 +330,16 @@ export class UserController {
 
     }
 
-
     static async changePassword(req: Request, res: Response) {
         try {
             if (!isDataEmpty(req.body)) {
                 const { password1 } = req.body;
                 const { password2 } = req.body;
+                console.log(password1, password2);
                 const forgotPassToken = req.params.forgotPassToken;
                 let payload = jwt.verify(forgotPassToken, SECRET_KEY_JWT);
                 let { userID } = payload;
-                let userObj = AppDataSource.manager.findOneBy(User, {
+                let userObj = await AppDataSource.manager.findOneBy(User, {
                     id: userID
                 });
 
@@ -276,9 +348,13 @@ export class UserController {
                     if (isPassMatch(password1, password2)) {
                         (await userObj).password = bcrypt.hashSync(password1, bcrypt.genSaltSync());
                         await AppDataSource.manager.save(userObj);
+                        return res.status(200).json({ "success": "password changed" });
                     }
 
-                    return res.status(200).json({ "success": "password changed" });
+                    else {
+                        return res.status(200).json({ "error": "passwords dont match" });
+                    }
+
                 }
 
                 else {
@@ -295,7 +371,10 @@ export class UserController {
         }
 
     }
-    
+
+    // authenticateToken will serve as middleware before each request that
+    // requires authentication. In case user is authenticated, userID will
+    // be added to req
     static async authenticateToken(req: Request, res: Response, next) {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
@@ -303,13 +382,27 @@ export class UserController {
         if (token == null) return res.sendStatus(401);
 
         jwt.verify(token, process.env.SECRET_KEY_JWT as string, (err: any, user: any) => {
-            console.log(err);
 
-            if (err) return res.sendStatus(403);
+            if (err) {
+                console.log(err);
+                return res.sendStatus(403);
+            }
 
             req["user"] = user;
 
             next();
         });
+    }
+
+    static async changeEmail(req: Request, res: Response){
+        // check if the user authenticated
+        // if he/she is, generate a token with payload containing new email and his/her userID
+        // send email contaning link to `confirmChangeEmail` route
+    }
+
+    static async confirmChangeEmail(req: Request, res: Response){
+        // get token from req.params.changeEmailToken
+        // read email and userID from payload
+        // change user email to email you got from payload
     }
 }
