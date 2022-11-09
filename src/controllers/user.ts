@@ -35,10 +35,6 @@ const ForgotPassExp: string = "1d";
 export class UserController {
     static async all(req: Request, res: Response) {
         try {
-
-            //TODO:
-            //  check if user requesting to this endpoint is authenticated and superuser
-
             const users = await AppDataSource.manager.find(User);
 
             return res.status(200).json(users);
@@ -52,10 +48,6 @@ export class UserController {
 
     static async get(req: Request, res: Response) {
         try {
-
-            //TODO:
-            //  check if requested user is authenticated and superuser
-
             let userID: number = parseInt(req.params.userID);
             const user = await AppDataSource.manager.findBy(User, {
                 id: userID,
@@ -246,7 +238,7 @@ export class UserController {
                 )
                 .execute();
 
-            res.json({ "sucess": "verified" });
+            res.json({ "sucess": "account verified" });
         } catch (err) {
             console.log(err);
         }
@@ -295,13 +287,11 @@ export class UserController {
     }
 
     static async forgotPassword(req: Request, res: Response) {
-        // generate token by user id
-        // send to the email
-        // have another end point to change password with the token
         let { email } = req.body;
         email = email.toLowerCase();
         console.log(email);
         const userObj = await AppDataSource.manager.findOneBy(User, {
+            isEmailVerified: true,
             email: email
         });
 
@@ -394,15 +384,141 @@ export class UserController {
         });
     }
 
-    static async changeEmail(req: Request, res: Response){
-        // check if the user authenticated
-        // if he/she is, generate a token with payload containing new email and his/her userID
-        // send email contaning link to `confirmChangeEmail` route
+    static async changeEmail(req: Request, res: Response) {
+        const requestedUserID = req["user"].id;
+        const requestedUserObj = await AppDataSource.getRepository(User).findOne({
+            where: { id: requestedUserID },
+            select: ["email", "firstName"],
+        });
+        let newEmail: string;
+        if (req.body.hasOwnProperty("newEmail")) {
+            newEmail = req.body.newEmail;
+            newEmail = newEmail.toLocaleLowerCase();
+
+            if (newEmail === requestedUserObj.email) {
+                return res.status(422).json({ "error": "cannot use the same email" });
+            }
+            if (isEmail(newEmail)) {
+
+                const alreadyTakenUser = AppDataSource.manager.findOneBy(User, {
+                    email: newEmail
+                });
+
+                if (alreadyTakenUser !== null) {
+                    return res.status(409).json({ "error": "email already taken" });
+                }
+                const payload = {
+                    userID: requestedUserID,
+                    newEmail: newEmail
+                };
+                const token: string = generateAccessToken(payload, '1d');
+                const emailSubject: string = "Verify your email address";
+                const changeEmailVerifyLink: string = `${baseURL}/users/confirm-change-email/${token}/`;
+                const emailContentHTML: string = `
+                Hello, dear ${requestedUserObj.firstName},<br>
+                as per your request, you can change your email address by clicking on the
+                link below:<br>
+
+                ${changeEmailVerifyLink}<br>
+
+                Thanks
+
+                Best,
+
+                ${baseURL} Team
+                `;
+                sendEmail({
+                    "email": requestedUserObj.email,
+                    "emailSubject": emailSubject,
+                    "emailContentHTML": emailContentHTML
+
+                });
+
+                res.status(202).json({ "success": "confirmation email sent" });
+            }
+
+            else {
+                res.status(422).json({ "error": "new email is not valid email" });
+            }
+        }
+
+        else {
+            res.status(422).json({ "error": "new email cannot be empty" });
+        }
+
     }
 
-    static async confirmChangeEmail(req: Request, res: Response){
-        // get token from req.params.changeEmailToken
-        // read email and userID from payload
-        // change user email to email you got from payload
+    static async confirmChangeEmail(req: Request, res: Response) {
+        const changeEmailToken = req.params.changeEmailToken;
+        let payload = jwt.verify(changeEmailToken, SECRET_KEY_JWT);
+        let { userID } = payload;
+        let { newEmail } = payload;
+
+        let userObj = await AppDataSource.manager.findOneBy(User, {
+            id: userID
+        });
+
+        userObj.email = newEmail;
+        AppDataSource.manager.save(userObj);
+        res.status(200).json({ "success": "email address changed" });
+    }
+
+    static async requestReconfirmEmail(req: Request, res: Response) {
+        let { email } = req.body;
+        email = email.toLocaleLowerCase();
+        const userObj = await AppDataSource.getRepository(User).findOne({
+            select: ["id", "firstName"],
+            where: {
+                email: email
+            }
+        });
+
+        const payload = {
+            userID: userObj.id
+        };
+        const reconfirmToken: string = generateAccessToken(payload, "1d");
+        const verifyLink: string = `${baseURL}/reconfirm-email/${reconfirmToken}/`;
+        let emailSubject: string = "Verify your email";
+        let emailContentHTML: string = `
+            Hello, <b>${userObj.firstName}</b>,<br>
+            <br>Welcome to our website!<br>
+            Please visit the below link to verify your account.<br><br>
+
+            ${verifyLink}
+
+            <br><br>
+
+            Thanks for joining!`;
+
+        sendEmail({
+            "email": email,
+            "emailSubject": emailSubject,
+            "emailContentHTML": emailContentHTML
+        });
+
+    }
+
+    static async reconfirmEmail(req: Request, res: Response) {
+        const { reconfirmToken } = req.params;
+        const token: string = req.params.token;
+        const payload = jwt.verify(token, SECRET_KEY_JWT);
+        const { userID } = payload;
+
+        let userObj = await AppDataSource.getRepository(User).findOne({
+            where: {
+                id: userID
+            },
+            select: ["isEmailVerified"]
+        })
+            ; (await userObj).isEmailVerified = true;
+        AppDataSource.getRepository(User).save(userObj);
+
+        return res.status(200).json({ "success": "acount verified" });
     }
 }
+
+
+// TODO:
+// test changeEmail, confirmChangeEmail, requestReconfirmEmail, reconfirmEmail
+// write try & catch where necessary
+// complete api doc in swagger.json

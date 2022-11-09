@@ -1,0 +1,10 @@
+POST http://127.0.0.1:3000/api/users/login/
+Content-Type: application/json
+
+{
+    "email":"ddos.hacker@bk.ru",
+    "password":"Yalcin-1",
+}
+
+
+# If you use postman, make sure you use raw for body

@@ -1,7 +1,10 @@
 const express = require("express");
-import * as dotenv from 'dotenv'
-const { trim_all} = require('request_trimmer');
-const methodOverride = require('method-override')
+import * as dotenv from 'dotenv';
+import { UserController } from './controllers/user';
+const { trim_all } = require('request_trimmer');
+const methodOverride = require('method-override');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 
 dotenv.config(); // configure dotenv
@@ -19,7 +22,10 @@ app.use(methodOverride('_method'));
 // Define Routes
 app.use('/api', require('./routes/index'));
 app.use('/api/users', require('./routes/users'));
-app.use('/api/reviews', require('./routes/reviews'))
+app.use('/api/reviews', require('./routes/reviews'));
+
+// swagger configs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // set up the server
 app.listen(PORT || 5000, () => {

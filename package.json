@@ -23,6 +23,8 @@
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
       "request_trimmer": "^1.0.0",
+      "swagger-jsdoc": "^6.2.5",
+      "swagger-ui-express": "^4.6.0",
       "ts-node-dev": "^2.0.0",
       "typeorm": "0.3.10"
    },
