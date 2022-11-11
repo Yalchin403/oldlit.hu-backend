@@ -13,19 +13,17 @@ import {
     generateAccessToken,
 } from '../utils/user';
 import e = require("express");
-import { json } from "stream/consumers";
+const path = require('path');
 const jwt = require('jsonwebtoken');
 
 
-dotenv.config();
-const SECRET_KEY_JWT: string = process.env.SECRET_KEY_JWT;
-let baseURL: string;
+const envPath: string = path.join(__dirname, `../.env/.env.${process.env.NODE_ENV}`);
+dotenv.config(
+    { path: envPath }
+);
 
-if (process.env.PROJ_ENV === "dev") {
-    baseURL = process.env.LOCAL_DOMAIN;
-} else {
-    baseURL = process.env.PROD_DOMAIN;
-}
+const SECRET_KEY_JWT: string = process.env.SECRET_KEY_JWT;
+const baseURL: string = process.env.DOMAIN;
 const LoginExp: string = "1800s";
 const EmailConfirmExp: string = "1d";
 const ForgotPassExp: string = "1d";
@@ -41,7 +39,7 @@ export class UserController {
 
         } catch (err) {
             console.error(err);
-            res.status(500).json("Internal server error");
+            return res.status(500).json("Internal server error");
         }
     }
 
@@ -476,7 +474,7 @@ export class UserController {
         const payload = {
             userID: userObj.id
         };
-        const reconfirmToken: string = generateAccessToken(payload, "1d");
+        const reconfirmToken: string = generateAccessToken(payload, EmailConfirmExp);
         const verifyLink: string = `${baseURL}/reconfirm-email/${reconfirmToken}/`;
         let emailSubject: string = "Verify your email";
         let emailContentHTML: string = `

@@ -12,27 +12,14 @@ const CURRRENT_ENVIRONMENT = process.env.CURRRENT_ENVIRONMENT;
 let POSTGRESS_PASSWORD = process.env.POSTGRES_PASSWORD;
 let POSTGRES_USER = process.env.POSTGRES_USER;
 let POSTGRES_DB = process.env.POSTGRES_DB;
-const POSTGRES_LOCALHOST_PORT = process.env.POSTGRES_LOCALHOST_PORT;
-const POSTGRES_LOCAL_DOCKER_PORT = process.env.POSTGRES_LOCAL_DOCKER_PORT;
-const POSTGRES_LOCALHOST_HOST = process.env.POSTGRES_LOCALHOST_HOST;
-const POSTGRES_LOCAL_DOCKER_HOST = process.env.POSTGRES_LOCAL_DOCKER_HOST;
-let port;
-let host;
+const POSTGRES_HOST = process.env.POSTGRES_HOST;
+const POSTGRES_PORT = +process.env.POSTGRES_PORT;
 
-if (CURRRENT_ENVIRONMENT == "local-docker") {
-    port = parseInt(POSTGRES_LOCAL_DOCKER_PORT);
-    host = POSTGRES_LOCAL_DOCKER_HOST;
-}
-
-else if (CURRRENT_ENVIRONMENT == "local-host") {
-    port = parseInt(POSTGRES_LOCALHOST_PORT);
-    host = POSTGRES_LOCALHOST_HOST;
-}
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: host,
-    port: port,
+    host: POSTGRES_HOST,
+    port: POSTGRES_PORT,
     username: POSTGRES_USER,
     password: POSTGRESS_PASSWORD,
     database: POSTGRES_DB,

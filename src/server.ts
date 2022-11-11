@@ -5,9 +5,14 @@ const { trim_all } = require('request_trimmer');
 const methodOverride = require('method-override');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const path = require('path');
 
 
-dotenv.config(); // configure dotenv
+// configure dotenv
+const envPath: string = path.join(__dirname, `../.env/.env.${process.env.NODE_ENV}`);
+dotenv.config(
+  { path: envPath }
+);
 const PORT = process.env.APP_PORT;
 
 // set up the app
@@ -31,3 +36,5 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.listen(PORT || 5000, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
+
+export default app;
