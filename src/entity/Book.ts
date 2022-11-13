@@ -27,13 +27,13 @@ export class Book {
     @Column()
     price: number;
 
-    @Column()
-    hitCounter: number=0;
+    @Column({default: 0})
+    hitCounter: number;
 
-    @Column()
+    @Column({default: false})
     isVerified: boolean;
 
-    @Column()
+    @Column({default:false})
     isPremium: boolean;
 
     @OneToMany(() => Review, (review) => review.book)

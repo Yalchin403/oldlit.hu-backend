@@ -34,8 +34,8 @@ export class BookController {
                 }
             }
 
-            if (req.query.category) {
-                const searchCategories = [req.query.category];
+            if (req.query.categoryIDs) {
+                const searchCategories = req.query.categoryIDs;
                 builder.innerJoin('book.categories', 'bookCategory', 'bookCategory.id IN (:...searchCategories)', { searchCategories });
                 // builder.innerJoin("book.categories", "category", "category.id = :bookCategory", { bookCategory: req.query.category });
             }
@@ -95,4 +95,5 @@ export class BookController {
 }
 
 //TODO
+// add specific user's books endpoint /api/books/me
 // fetch them randomly for each user
