@@ -33,6 +33,9 @@ export class Book {
     @Column()
     isVerified: boolean;
 
+    @Column()
+    isPremium: boolean;
+
     @OneToMany(() => Review, (review) => review.book)
     reviews: Review[];
 

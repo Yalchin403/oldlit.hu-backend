@@ -28,7 +28,7 @@ export class UserController {
                 .createQueryBuilder('user');
 
             if (req.query.search) {
-                builder.where("(user.firstName LIKE :search OR user.lastName LIKE :search OR user.email LIKE :search)", { search: `%${req.query.search}%` });
+                builder.where("(user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.email LIKE :search)", { search: `%${req.query.search}%` });
             }
 
             const is_email_verified = req.query.is_email_verified;

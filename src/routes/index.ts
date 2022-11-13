@@ -8,7 +8,7 @@ import { BookController } from "../controllers/index";
 dotenv.config();
 
 router.get('/books/', BookController.getAll);
-
+router.get('/books/:bookID', BookController.get);
 router.post('/books/', BookController.create);
 
 module.exports = router;
