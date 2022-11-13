@@ -1,7 +1,8 @@
 .idea/
+logs/
 node_modules/
 build/
 tmp/
 temp/
 .env
-External Libraries  
+External Libraries
