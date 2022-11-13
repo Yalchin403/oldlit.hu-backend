@@ -15,3 +15,10 @@ Steps to run this project:
     SUPER_USER_EMAIL=emailforadmin
     ```
 3. Run `npm start` command
+
+
+To create a super user, run `./deploy.sh` and execute:
+
+```sh
+npm create:superuser
+```

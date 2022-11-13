@@ -5,10 +5,11 @@ import { Book } from "./entity/Book";
 import { Review } from "./entity/Review";
 import * as dotenv from 'dotenv';
 import { Category } from "./entity/Category";
+import { initializeDotenv } from "./utils/init-dotenv";
 
 
-dotenv.config();
-const CURRRENT_ENVIRONMENT = process.env.CURRRENT_ENVIRONMENT;
+initializeDotenv();
+
 let POSTGRESS_PASSWORD = process.env.POSTGRES_PASSWORD;
 let POSTGRES_USER = process.env.POSTGRES_USER;
 let POSTGRES_DB = process.env.POSTGRES_DB;

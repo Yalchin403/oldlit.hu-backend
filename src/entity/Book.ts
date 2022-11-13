@@ -6,39 +6,42 @@ import {
     OneToMany,
     ManyToMany,
     JoinTable,
-} from "typeorm"
-import { User } from "./User"
-import { Review } from './Review'
-import { Category } from "./Category"
+} from "typeorm";
+import { User } from "./User";
+import { Review } from './Review';
+import { Category } from "./Category";
 
 
 @Entity()
 export class Book {
 
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    description: string
+    description: string;
 
     @Column()
-    price: number
+    price: number;
 
     @Column()
-    isVerified: boolean
+    hitCounter: number=0;
+
+    @Column()
+    isVerified: boolean;
 
     @OneToMany(() => Review, (review) => review.book)
-    reviews: Review[]
+    reviews: Review[];
 
     @ManyToOne(() => User, (user) => user.books)
-    user: User
+    user: User;
 
     @ManyToMany(() => Category)
     @JoinTable()
-    categories: Category[]
+    categories: Category[];
 }
 
 

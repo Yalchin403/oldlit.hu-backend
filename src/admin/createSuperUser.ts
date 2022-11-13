@@ -2,9 +2,11 @@ import { User } from "../entity/User"
 import { AppDataSource } from "../data-source"
 import * as dotenv from 'dotenv'
 import * as bcrypt from 'bcryptjs'
+import { initializeDotenv } from "../utils/init-dotenv";
 
+// dotenv.config()
+initializeDotenv()
 
-dotenv.config()
 AppDataSource.initialize().then(async () => {
     console.log("Creating superuser...");
     let plainPassword = process.env.SUPER_USER_PASSWORD; 

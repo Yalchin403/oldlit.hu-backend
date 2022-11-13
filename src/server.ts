@@ -1,18 +1,19 @@
 const express = require("express");
 import * as dotenv from 'dotenv';
 import { UserController } from './controllers/user';
+import { initializeDotenv } from './utils/init-dotenv';
 const { trim_all } = require('request_trimmer');
 const methodOverride = require('method-override');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-const path = require('path');
-
+import { initializeLogger } from './utils/inti-logger';
 
 // configure dotenv
-const envPath: string = path.join(__dirname, `../.env/.env.${process.env.NODE_ENV}`);
-dotenv.config(
-  { path: envPath }
-);
+initializeDotenv();
+
+// configure logging
+export const logger = initializeLogger();
+
 const PORT = process.env.APP_PORT;
 
 // set up the app
