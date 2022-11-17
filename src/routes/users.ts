@@ -14,7 +14,7 @@ router.post('/forgot-password/', UserController.forgotPassword);
 router.patch('/change-password/:forgotPassToken/', UserController.changePassword);
 router.post('/change-email/', UserController.authenticateToken, UserController.changeEmail);
 router.patch('/confirm-change-email/:changeEmailToken/', UserController.confirmChangeEmail);
-router.post('/request-reconfirm-email', UserController.requestReconfirmEmail);
-
+router.post('/request-reconfirm-email/', UserController.requestReconfirmEmail);
+router.get('/profile/me/', UserController.authenticateToken, UserController.getProfile);
 
 module.exports = router;

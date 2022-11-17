@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
-import { User } from "./User"
-import { Book } from './Book'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { User } from "./User";
+import { Book } from './Book';
 
 @Entity()
 export class Review {
 
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
-    @Column()
-    stars: number
+    @Column({ nullable: false })
+    stars: number;
 
-    @Column()
-    description: string
+    @Column({ nullable: true })
+    description: string;
 
-    @ManyToOne(() => Book, (book) => book.reviews)
-    book: Book
+    @ManyToOne(() => Book, (book) => book.reviews, { nullable: false })
+    book: Book;
 
-    @ManyToOne(() => User, (user) => user.reviews)
-    user: User
+    @ManyToOne(() => User, (user) => user.reviews, { nullable: false })
+    user: User;
 }
 
 

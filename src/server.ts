@@ -22,6 +22,9 @@ app.use(express.json());
 app.use(express.static('static'));
 app.use(trim_all);
 
+// apply middleware to add user to request if the user is authenticated
+app.use(UserController.addUserToRequestIfAuthenticated);
+
 // override with POST having ?_method=PUT
 app.use(methodOverride('_method'));
 

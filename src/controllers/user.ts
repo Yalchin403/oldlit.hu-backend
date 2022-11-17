@@ -35,7 +35,7 @@ export class UserController {
             if (req.query.is_email_verified) {
                 builder.andWhere("user.isEmailVerified = :isEmailVerified", { isEmailVerified: is_email_verified });
             }
-            
+
             const page: number = parseInt(req.query.page as any) || 1;
             const perPage = ITEMS_PER_PAGE;
             const total = await builder.getCount();
@@ -604,9 +604,57 @@ export class UserController {
         }
 
     }
+
+    static async getProfile(req: Request, res: Response) {
+        try {
+            const userID: number = parseInt(req["user"]["id"]);
+            const user = await AppDataSource.getRepository(User).findOne({
+                select: ["id", "firstName", "lastName", "email", "isEmailVerified", "dateJoined"],
+                where: {
+                    id: userID,
+                }
+            });
+
+            return res.status(200).json(user);
+
+        } catch (err) {
+            logger.error(`Internal server error from getProfile. Error: ${err}`);
+            return res.status(500).json({ "error": "internal server error" });
+
+        }
+    }
+
+    static async addUserToRequestIfAuthenticated(req: Request, res: Response, next) {
+        try {
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+
+            if (token == null) {
+                req["user"] = null;
+            }
+
+            else {
+                jwt.verify(token, process.env.SECRET_KEY_JWT as string, (err: any, user: any) => {
+
+                    if (err) {
+                        req["user"] = null;
+                    }
+
+                    else {
+                        req["user"] = user;
+                    }
+
+                });
+            }
+        } catch (err) {
+            req["user"] = null;
+        }
+
+        next();
+
+    }
 }
 
 
 // TODO:
-// add profile api /api/users/me
 // complete api doc in swagger.json
