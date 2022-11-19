@@ -5,7 +5,8 @@ from .models import (
     ContactInfo,
     Category,
     BookCategoriesCategory,
-    Book
+    Book,
+    BookIsActiveWorkerTracker,
 )
 
 
@@ -16,4 +17,5 @@ admin.site.register([
     Category,
     BookCategoriesCategory,
     Book,
+    BookIsActiveWorkerTracker,
 ])

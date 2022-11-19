@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from os.path import join, dirname
+from .celery import app
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +44,7 @@ ALLOWED_HOSTS = ['localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'django_admin',
+    'django_admin.apps.DjangoAdminConfig',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -145,6 +146,15 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# celery config
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_TIMEZONE = "UTC"
+CELERY_RESULT_BACKEND = "redis://redis:6379" # if you are using docker for celery and redis and running the app on localhost
+CELERY_ENABLE_UTC = False
+CELERY_BROKER_URL = "redis://redis:6379/"
+# CELERY_RESULT_BACKEND = "redis://redis:6379" # if you have dockerized everything and named redis container as redis
 
 
 # JAZZMIN CONFIGUTATION
@@ -203,3 +213,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     "default_icon_children": "fas fa-circle",
 #     "show_ui_builder": True,
 # }
+
+
+# EMAIL CONFIGURATION
+EMAIL_HOST = os.getenv('SMTP_API_HOST')
+EMAIL_PORT = int(os.getenv('SMTP_PORT'))
+EMAIL_HOST_USER = os.getenv('SMTP_USERNAME')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASS')
+EMAIL_USE_TLS = True

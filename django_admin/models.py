@@ -208,3 +208,11 @@ class User(models.Model):
 
     def __str__(self) -> str:
         return f"{self.firstname} {self.lastname}"
+
+
+class BookIsActiveWorkerTracker(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="activity_tracker")
+    ending_time = models.DateTimeField()
+
+    def __str__(self) -> str:
+        return f"{self.book.id} - {self.ending_time}"

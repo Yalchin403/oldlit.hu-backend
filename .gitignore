@@ -6,3 +6,5 @@ tmp/
 temp/
 .env
 External Libraries
+todo
+**__pycache__**

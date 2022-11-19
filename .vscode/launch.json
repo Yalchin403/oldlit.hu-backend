@@ -14,6 +14,22 @@
             "localRoot": "${workspaceFolder}/src/",
             "restart": true
 
-        }
+        },
+
+        {
+            "name": "Docker attacj to Django",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+             },
+           "pathMappings": [{
+               "localRoot": "${workspaceFolder}",
+               "remoteRoot": "/app"
+            }],
+           "django": true,
+           "restart": true
+          }
     ]
 }

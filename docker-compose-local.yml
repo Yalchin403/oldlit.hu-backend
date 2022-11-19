@@ -56,6 +56,50 @@ services:
       - db
       - redis-commander
 
+  worker:  # django admin panel celery
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    image: madefire/chordtest
+    command: bash -c "celery -A oldlithu_admin_panel worker -l INFO"
+    environment:
+      - BROKER_URL=redis://redis:6379/0
+      - RESULT_BACKEND=redis://redis:6379/0
+      - C_FORCE_ROOT=true
+    volumes:
+      - ./:/app/
+    depends_on:
+      - redis
+      - db
+
+  django_admin:
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+
+    env_file: .env/.django.env
+    command: >
+      bash -c "python3 manage.py runserver 0.0.0.0:8000
+      && python3 manage.py makemigrations
+      && python3 manage.py migrate
+      && python3 manage.py collectstatic"
+    links:
+      - db:db
+      - redis:redis
+      - worker:worker
+    depends_on:
+      - db
+      - redis
+      - worker
+    restart: always
 
 volumes:
   pgdata:
+  worker:

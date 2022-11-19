@@ -8,6 +8,7 @@ import {
     JoinTable,
     OneToOne,
     JoinColumn,
+    AfterUpdate,
 } from "typeorm";
 import { User } from "./User";
 import { Review } from './Review';
