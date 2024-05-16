@@ -1,0 +1,26 @@
+{
+  "packageTable": "Package",
+  "packageData": [
+    {
+      "id": 1,
+      "name": "3 Day Premium",
+      "description": "Make the book premium for 3 days",
+      "price": 500,
+      "duration": 3
+    },
+    {
+      "id": 2,
+      "name": "7 Day Premium",
+      "description": "Make the book premium for 7 days",
+      "price": 1000,
+      "duration": 7
+    },
+    {
+      "id": 3,
+      "name": "30 Day Premium",
+      "description": "Make the book premium for 30 days",
+      "price": 3000,
+      "duration": 30
+    }
+  ]
+}

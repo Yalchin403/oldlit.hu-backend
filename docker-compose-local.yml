@@ -1,0 +1,59 @@
+services:
+  db:
+    image: "postgres:12"
+    restart: always
+    env_file: .env/.env.local
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata_oldlit:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+
+  api:
+    container_name: api
+    build:
+      context: ./
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    command: >
+      sh -c "npm run load:fixtures &&
+        npm run start:local"
+
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    env_file:
+      - .env/.env.local
+    depends_on:
+      - redis
+      - db
+      - redis-commander
+    restart: always
+
+volumes:
+  pgdata_oldlit:
+  worker:

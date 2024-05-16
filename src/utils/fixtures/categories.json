@@ -1,0 +1,45 @@
+{
+  "categoryTable": "Category",
+  "categoryData": [
+    {
+      "id": 1,
+      "name": "Fiction"
+    },
+    {
+      "id": 2,
+      "name": "Non-fiction"
+    },
+    {
+      "id": 3,
+      "name": "Science Fiction"
+    },
+    {
+      "id": 4,
+      "name": "Fantasy"
+    },
+    {
+      "id": 5,
+      "name": "Mystery"
+    },
+    {
+      "id": 6,
+      "name": "Thriller"
+    },
+    {
+      "id": 7,
+      "name": "Romance"
+    },
+    {
+      "id": 8,
+      "name": "Biography"
+    },
+    {
+      "id": 9,
+      "name": "History"
+    },
+    {
+      "id": 10,
+      "name": "Self-help"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "python.defaultInterpreterPath": "${command:python.interpreterPath}",
+  "python.envFile": "${workspaceRoot}/.env/.django.env",
+  "python.formatting.provider": "none",
+  "editor.formatOnSave": false,
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
+  "editor.acceptSuggestionOnEnter": "on",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "python.formatting.provider": "black"
+  }
+}

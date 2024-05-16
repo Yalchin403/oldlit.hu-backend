@@ -1,0 +1,44 @@
+services:
+  db:
+    image: "postgres:12"
+    restart: always
+    env_file: .env/.env.dev
+    volumes:
+      - pgdata_oldlit:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  redis:
+    image: redis
+    container_name: redis
+
+  api:
+    container_name: api
+    build:
+      context: ./
+    volumes:
+      - api_data:/src
+      - media:/app/src/media
+    command: >
+      sh -c "npm run load:fixtures &&
+        npm run start:dev"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env/.env.dev
+    depends_on:
+      - redis
+      - db
+    restart: always
+
+volumes:
+  pgdata_oldlit:
+  worker:
+  api_data:
+  media:

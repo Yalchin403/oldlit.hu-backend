@@ -1,0 +1,51 @@
+{
+  "name": "oldlit.hu",
+  "version": "0.0.1",
+  "description": "Awesome project developed with TypeORM.",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/bull": "^4.10.0",
+    "@types/express": "^4.17.21",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^16.11.10",
+    "@types/supertest": "^2.0.12",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.1",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.7.0",
+    "typescript": "4.5.2"
+  },
+  "dependencies": {
+    "@types/jest": "^29.5.12",
+    "bcryptjs": "^2.4.3",
+    "bull": "^4.12.2",
+    "class-transformer": "^0.5.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "mailgun.js": "^10.2.1",
+    "method-override": "^3.0.0",
+    "mocha": "^10.1.0",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.13",
+    "request_trimmer": "^1.0.0",
+    "stripe": "^15.1.0",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.6.0",
+    "ts-node-dev": "^2.0.0",
+    "typeorm": "^0.3.17",
+    "winston": "^3.8.2"
+  },
+  "scripts": {
+    "start": "NODE_ENV=production npx nodemon --inspect=0.0.0.0 src/server.ts",
+    "start:test": "NODE_ENV=test jest",
+    "start:local": "NODE_ENV=docker npx nodemon src/server.ts",
+    "start:dev": "NODE_ENV=development npx ts-node src/server.ts",
+    "create:superuser": "NODE_ENV=local ts-node admin/createSuperUser.ts",
+    "load:fixtures": "ts-node src/utils/fixtures/loadFixtures.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
+  }
+}

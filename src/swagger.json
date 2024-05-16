@@ -1,0 +1,1028 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My User Project CRUD",
+    "description": "My User Project Application API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "http://domain/api",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "users"
+    },
+    {
+      "name": "books"
+    },
+    {
+      "name": "reviews"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Sign up",
+        "operationId": "Signup",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SignupRequest"
+                  },
+                  {
+                    "example": {
+                      "firstName": "TestName",
+                      "lastName": "TestSurname",
+                      "password1": "Yalcin-1",
+                      "password2": "Yalcin-1",
+                      "email": "ddos.hacker@bk.ru"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "firstName": "TestName",
+                "lastName": "TestSurname",
+                "password1": "Yalcin-1",
+                "password2": "Yalcin-1",
+                "email": "ddos.hacker@bk.ru"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      },
+      "get": {
+        "tags": ["users"],
+        "summary": "List users",
+        "operationId": "Listusers",
+        "parameters": [
+          {
+            "name": "is_email_verified",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "out"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Sign in",
+        "operationId": "Signin",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SigninRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "ddos.hacker@bk.ru",
+                      "password": "Yalcin-1"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "ddos.hacker@bk.ru",
+                "password": "Yalcin-1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/confirm-email/{emailVerifyToken}": {
+      "patch": {
+        "tags": ["users"],
+        "summary": "Verify email",
+        "operationId": "Verifyemail",
+        "parameters": [
+          {
+            "name": "emailVerifyToken",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/auth/token": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Get auth token",
+        "operationId": "Getauthtoken",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/GetauthtokenRequest"
+                  },
+                  {
+                    "example": {
+                      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJkZG9zLmhhY2tlckBiay5ydSIsImZpcnN0TmFtZSI6IlRlc3ROYW1lIiwibGFzdE5hbWUiOiJUZXN0U3VybmFtZSIsImlzRW1haWxWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNzAwNjE4NjkwLCJleHAiOjE3MDEyMjM0OTB9.EwITmubyudFIrCBfDqxmw5t-Wu4wiFHqe_5R1cMWWFQ"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJkZG9zLmhhY2tlckBiay5ydSIsImZpcnN0TmFtZSI6IlRlc3ROYW1lIiwibGFzdE5hbWUiOiJUZXN0U3VybmFtZSIsImlzRW1haWxWZXJpZmllZCI6dHJ1ZSwiaWF0IjoxNzAwNjE4NjkwLCJleHAiOjE3MDEyMjM0OTB9.EwITmubyudFIrCBfDqxmw5t-Wu4wiFHqe_5R1cMWWFQ"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/{userID}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get user",
+        "operationId": "Getuser",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      },
+      "put": {
+        "tags": ["users"],
+        "summary": "Update user",
+        "operationId": "Updateuser",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsImlhdCI6MTY2Nzc4MDMyMSwiZXhwIjoxNjY3NzgyMTIxfQ.mkpMhHz5MImY3bq_v5HUFRWIIQjy7Rmzxfas990fAeU"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateuserRequest"
+                  },
+                  {
+                    "example": {
+                      "firstName": "Successfull",
+                      "lastName": "Programmer"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "firstName": "Successfull",
+                "lastName": "Programmer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["users"],
+        "summary": "Delete user",
+        "operationId": "Deleteuser",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/forgot-password": {
+      "patch": {
+        "tags": ["users"],
+        "summary": "Forgot password",
+        "operationId": "Forgotpassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ForgotpasswordRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "ddos.hacker@bk.r"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "ddos.hacker@bk.r"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      },
+      "post": {
+        "tags": ["users"],
+        "summary": "Reset password",
+        "operationId": "Resetpassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ResetpasswordRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "ddos.hacker@bk.ru"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "ddos.hacker@bk.ru"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/change-password/{passwordToken}": {
+      "patch": {
+        "tags": ["users"],
+        "summary": "Change password",
+        "operationId": "Changepassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ChangepasswordRequest"
+                  },
+                  {
+                    "example": {
+                      "password1": "Test-1",
+                      "password2": "Test-1"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "password1": "Test-1",
+                "password2": "Test-1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/request-reconfirm-email": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Request account verification email again",
+        "operationId": "Requestaccountverificationemailagain",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RequestaccountverificationemailagainRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "ddos.hacker@bk.ru"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "ddos.hacker@bk.ru"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/change-email": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Request change email",
+        "operationId": "Requestchangeemail",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RequestchangeemailRequest"
+                  },
+                  {
+                    "example": {
+                      "newEmail": "yalchin403@zohomail.eu"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "newEmail": "yalchin403@zohomail.eu"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/confirm-change-email/{changeEmailToken}": {
+      "patch": {
+        "tags": ["users"],
+        "summary": "Confirm change email",
+        "operationId": "Confirmchangeemail",
+        "parameters": [
+          {
+            "name": "changeEmailToken",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/users/profile/me": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get my profile",
+        "operationId": "Getmyprofile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/books": {
+      "get": {
+        "tags": ["books"],
+        "summary": "List books",
+        "operationId": "Listbooks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      },
+      "post": {
+        "tags": ["books"],
+        "summary": "Create books",
+        "operationId": "Createbooks",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreatebooksRequest"
+                  },
+                  {
+                    "example": {
+                      "name": "Sample book",
+                      "description": "Sample description",
+                      "price": 20.99,
+                      "contact": 1,
+                      "userId": 5,
+                      "categoryIds": [1, 2],
+                      "images": ["kofta_default.webp", "kofta_mavi.webp"]
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "name": "Sample book",
+                "description": "Sample description",
+                "price": 20.99,
+                "contact": 1,
+                "userId": 5,
+                "categoryIds": [1, 2],
+                "images": ["kofta_default.webp", "kofta_mavi.webp"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/books/1": {
+      "get": {
+        "tags": ["books"],
+        "summary": "Get book",
+        "operationId": "Getbook",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/books/me": {
+      "get": {
+        "tags": ["books"],
+        "summary": "My books",
+        "operationId": "Mybooks",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/books/upload": {
+      "post": {
+        "tags": ["books"],
+        "summary": "Upload book images",
+        "operationId": "Uploadbookimages",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "encoding": {},
+              "schema": {
+                "required": ["images"],
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/reviews/4": {
+      "get": {
+        "tags": ["reviews"],
+        "summary": "Get reviews",
+        "operationId": "Getreviews",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/reviews/1": {
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Add review",
+        "operationId": "Addreview",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AddreviewRequest"
+                  },
+                  {
+                    "example": {
+                      "stars": 5,
+                      "description": "Awesome book",
+                      "bookID": 4
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "stars": 5,
+                "description": "Awesome book",
+                "bookID": 4
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://example.com/:{port}/api",
+            "variables": {
+              "port": {
+                "default": "DefaultParameterValue"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "required": [
+        "dataJoined",
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "dateJoined": {
+          "type": "string",
+          "uniqueItems": false
+        },
+        "id": {
+          "type": "number",
+          "uniqueItems": true
+        },
+        "firstName": {
+          "type": "string",
+          "uniqueItems": false
+        },
+        "lastName": {
+          "type": "string",
+          "uniqueItems": false
+        },
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "Users": {
+    "type": "array",
+    "$ref": "#/definitions/User"
+  }
+}
