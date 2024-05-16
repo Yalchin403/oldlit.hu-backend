@@ -151,6 +151,8 @@ export class BookController {
       ]);
       builder.leftJoinAndSelect("book.categories", "category");
       builder.leftJoinAndSelect("book.user", "user");
+      builder.leftJoinAndSelect("book.contact", "contact");
+
 
       const bookObj = await builder.getOne();
 
@@ -248,43 +250,43 @@ export class BookController {
 
   static async upload(req, res) {
     try {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send("No files were uploaded.");
+      if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send("No files were uploaded.");
+      }
+
+      const uploadPath = path.join(__dirname, "../media/books/");
+      if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+      }
+
+      const uploadedImages = [];
+
+      // Handle single or multiple files uniformly
+      const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+
+      for (const file of files) {
+        const filePath = path.join(uploadPath, file.name);
+
+        // Use try-catch for better error handling
+        try {
+          await file.mv(filePath);
+          uploadedImages.push({
+            name: file.name,
+            path: `/media/books/${file.name}`,
+          });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).send("Image upload failed.");
         }
+      }
 
-        const uploadPath = path.join(__dirname, "../media/books/");
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-
-        const uploadedImages = [];
-
-        // Handle single or multiple files uniformly
-        const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
-
-        for (const file of files) {
-            const filePath = path.join(uploadPath, file.name);
-
-            // Use try-catch for better error handling
-            try {
-                await file.mv(filePath);
-                uploadedImages.push({
-                    name: file.name,
-                    path: `/media/books/${file.name}`,
-                });
-            } catch (error) {
-                console.error(error);
-                return res.status(500).send("Image upload failed.");
-            }
-        }
-
-        res.status(201).send({ images: uploadedImages });
+      res.status(201).send({ images: uploadedImages });
     } catch (error) {
-        console.error(`Error in upload book images: ${error}`);
-        logger.error(`Error in upload book images, internal server error. Error: ${error}`);
-        res.status(500).send("Internal Server Error");
+      console.error(`Error in upload book images: ${error}`);
+      logger.error(`Error in upload book images, internal server error. Error: ${error}`);
+      res.status(500).send("Internal Server Error");
     }
-}
+  }
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
